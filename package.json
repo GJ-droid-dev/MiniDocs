@@ -1,0 +1,21 @@
+{
+  "name": "minidocs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MiniDocs — Minimal Document Workspace with Rich-Text Editing, File Upload, and Sharing",
+  "scripts": {
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "install:all": "npm --prefix client install && npm --prefix server install",
+    "build:client": "cd client && npm run build"
+  },
+  "keywords": [
+    "document-editor",
+    "tiptap",
+    "react",
+    "express",
+    "neon-postgres"
+  ],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,9 @@
+node_modules/
+.env
+.env.local
+dist/
+*.sqlite
+*.sqlite3
+/server/uploads/
+.DS_Store
+Thumbs.db
