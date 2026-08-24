@@ -258,6 +258,10 @@ a {
 }
 
 /* Tiptap ProseMirror Custom Styles */
+.ProseMirror {
+  white-space: pre-wrap !important;
+}
+
 .tiptap-container {
   width: 100%;
 }
@@ -269,7 +273,7 @@ a {
   font-family: var(--font-sans);
   font-size: 1.0625rem;
   line-height: 1.7;
-  white-space: pre-wrap;
+  white-space: pre-wrap !important;
 }
 
 .tiptap-container .ProseMirror > * + * {

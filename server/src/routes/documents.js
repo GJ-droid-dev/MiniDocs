@@ -37,7 +37,10 @@ router.post('/', auth, async (req, res, next) => {
   try {
     const { title, content } = req.body;
     const documentTitle = typeof title === 'string' && title.trim() ? title.trim() : 'Untitled Document';
-    const documentContent = content && typeof content === 'object' ? content : { type: 'doc', content: [] };
+    const documentContent =
+      content && typeof content === 'object' && content.type === 'doc'
+        ? content
+        : { type: 'doc', content: [{ type: 'paragraph' }] };
 
     const result = await pool.query(
       `INSERT INTO documents (owner_id, title, content, created_at, updated_at)

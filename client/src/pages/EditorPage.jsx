@@ -2,12 +2,41 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
 import { api } from '../api';
 import Toolbar from '../components/Toolbar';
 import AttachmentDrawer from '../components/AttachmentDrawer';
 import ShareModal from '../components/ShareModal';
 import Toast from '../components/Toast';
+
+// Safely normalize any raw content into a valid ProseMirror doc structure
+function normalizeDocContent(raw) {
+  if (
+    raw &&
+    typeof raw === 'object' &&
+    raw.type === 'doc' &&
+    Array.isArray(raw.content) &&
+    raw.content.length > 0
+  ) {
+    return raw;
+  }
+  return {
+    type: 'doc',
+    content: [
+      {
+        type: 'paragraph',
+        content: [],
+      },
+    ],
+  };
+}
+
+const EXTENSIONS = [
+  StarterKit.configure({
+    heading: {
+      levels: [1, 2],
+    },
+  }),
+];
 
 export default function EditorPage() {
   const { id } = useParams();
@@ -33,53 +62,15 @@ export default function EditorPage() {
 
   // Initialize Tiptap Editor
   const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2],
-        },
-      }),
-      Underline,
-    ],
-    content: { type: 'doc', content: [] },
+    extensions: EXTENSIONS,
+    content: { type: 'doc', content: [{ type: 'paragraph' }] },
     editable: true,
     onUpdate: () => {
-      if (!isInitialMount.current && isOwner) {
+      if (!isInitialMount.current) {
         triggerAutosave();
       }
     },
   });
-
-  // Fetch document details from API
-  useEffect(() => {
-    async function loadDoc() {
-      setLoading(true);
-      try {
-        const data = await api.getDocument(id);
-        const doc = data?.document;
-        setDocumentData(doc);
-        setIsOwner(Boolean(data?.isOwner));
-        setTitle(doc?.title || 'Untitled Document');
-
-        if (editor && doc?.content) {
-          editor.commands.setContent(doc.content);
-          editor.setEditable(Boolean(data?.isOwner));
-        }
-
-        setTimeout(() => {
-          isInitialMount.current = false;
-        }, 300);
-      } catch (err) {
-        setError(err.message || 'Failed to load document.');
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    if (editor && id) {
-      loadDoc();
-    }
-  }, [id, editor]);
 
   // Autosave function
   const triggerAutosave = useCallback(() => {
@@ -105,6 +96,62 @@ export default function EditorPage() {
       }
     }, 1000);
   }, [id, title, editor, isOwner]);
+
+  // Fetch document details from API
+  useEffect(() => {
+    let isCancelled = false;
+
+    async function loadDoc() {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await api.getDocument(id);
+        if (isCancelled) return;
+
+        const doc = data?.document;
+        setDocumentData(doc);
+        setIsOwner(Boolean(data?.isOwner));
+        setTitle(doc?.title || 'Untitled Document');
+
+        if (editor && !editor.isDestroyed) {
+          const safeContent = normalizeDocContent(doc?.content);
+          editor.commands.setContent(safeContent, false);
+          editor.setEditable(Boolean(data?.isOwner));
+        }
+
+        setTimeout(() => {
+          if (!isCancelled) {
+            isInitialMount.current = false;
+          }
+        }, 300);
+      } catch (err) {
+        if (!isCancelled) {
+          setError(err.message || 'Failed to load document.');
+        }
+      } finally {
+        if (!isCancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    if (id) {
+      loadDoc();
+    }
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [id, editor]);
+
+  // Sync editor content if editor was initialized after documentData was fetched
+  useEffect(() => {
+    if (editor && !editor.isDestroyed && documentData && isInitialMount.current) {
+      const safeContent = normalizeDocContent(documentData.content);
+      editor.commands.setContent(safeContent, false);
+      editor.setEditable(isOwner);
+    }
+  }, [editor, documentData, isOwner]);
 
   const handleTitleChange = (e) => {
     const newTitle = e.target.value;
@@ -324,7 +371,9 @@ export default function EditorPage() {
           }}
         >
           <span>ℹ</span>
-          <span>You are viewing this document in <strong>read-only mode</strong> (Shared by {documentData?.ownerName}).</span>
+          <span>
+            You are viewing this document in <strong>read-only mode</strong> (Shared by {documentData?.ownerName}).
+          </span>
         </div>
       )}
 
