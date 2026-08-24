@@ -146,4 +146,57 @@ export const api = {
     });
     return handleResponse(res);
   },
+
+  // Version History
+  async getVersions(documentId) {
+    const res = await fetch(`${API_BASE}/documents/${documentId}/versions`, {
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(res);
+  },
+
+  async createVersion(documentId, label = null) {
+    const res = await fetch(`${API_BASE}/documents/${documentId}/versions`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ label }),
+    });
+    return handleResponse(res);
+  },
+
+  async getVersion(documentId, versionId) {
+    const res = await fetch(`${API_BASE}/documents/${documentId}/versions/${versionId}`, {
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(res);
+  },
+
+  async restoreVersion(documentId, versionId) {
+    const res = await fetch(`${API_BASE}/documents/${documentId}/versions/${versionId}/restore`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(res);
+  },
+
+  async updateVersionLabel(documentId, versionId, label) {
+    const res = await fetch(`${API_BASE}/documents/${documentId}/versions/${versionId}`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ label }),
+    });
+    return handleResponse(res);
+  },
+
+  async deleteVersion(documentId, versionId) {
+    const res = await fetch(`${API_BASE}/documents/${documentId}/versions/${versionId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(res);
+  },
 };
+
+export default api;
+
+

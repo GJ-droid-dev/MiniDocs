@@ -8,6 +8,7 @@ const usersRoutes = require('./routes/users');
 const documentsRoutes = require('./routes/documents');
 const attachmentsRoutes = require('./routes/attachments');
 const sharesRoutes = require('./routes/shares');
+const versionsRoutes = require('./routes/versions');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -65,8 +66,9 @@ app.get('/api/health', (req, res) => {
 // Mount Resource Routes
 app.use('/api/users', usersRoutes);
 app.use('/api/documents', documentsRoutes);
-app.use('/api/documents', attachmentsRoutes); // e.g. /api/documents/:id/attachment
-app.use('/api/documents', sharesRoutes);      // e.g. /api/documents/:id/shares
+app.use('/api/documents', attachmentsRoutes);         // e.g. /api/documents/:id/attachment
+app.use('/api/documents', sharesRoutes);              // e.g. /api/documents/:id/shares
+app.use('/api/documents/:id/versions', versionsRoutes); // e.g. /api/documents/:id/versions
 
 // Central 404 Handler for API routes
 app.use('/api/*', (req, res) => {

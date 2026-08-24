@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import Toolbar from '../components/Toolbar';
 import AttachmentDrawer from '../components/AttachmentDrawer';
 import ShareModal from '../components/ShareModal';
+import VersionHistoryPanel from '../components/VersionHistoryPanel';
 import Toast from '../components/Toast';
 
 // Safely normalize any raw content into a valid ProseMirror doc structure
@@ -53,10 +54,14 @@ export default function EditorPage() {
   const [title, setTitle] = useState('');
   const [saveStatus, setSaveStatus] = useState('saved'); // 'saved' | 'saving' | 'unsaved' | 'error'
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [selectedVersionId, setSelectedVersionId] = useState(null);
+  const [previewVersionData, setPreviewVersionData] = useState(null);
   const [toast, setToast] = useState(null);
 
   const saveTimeoutRef = useRef(null);
   const isInitialMount = useRef(true);
+  const headDocContentRef = useRef(null);
 
   const showToast = (message, type = 'info') => {
     setToast({ message, type });
@@ -69,15 +74,15 @@ export default function EditorPage() {
     content: { type: 'doc', content: [{ type: 'paragraph' }] },
     editable: true,
     onUpdate: () => {
-      if (!isInitialMount.current) {
+      if (!isInitialMount.current && selectedVersionId === null) {
         triggerAutosave();
       }
     },
   });
 
-  // Autosave function
+  // Autosave function (only active when not in preview mode)
   const triggerAutosave = useCallback(() => {
-    if (!isOwner || !editor) return;
+    if (!isOwner || !editor || selectedVersionId !== null) return;
 
     setSaveStatus('saving');
     if (saveTimeoutRef.current) {
@@ -87,6 +92,7 @@ export default function EditorPage() {
     saveTimeoutRef.current = setTimeout(async () => {
       try {
         const contentJson = editor.getJSON();
+        headDocContentRef.current = contentJson;
         await api.updateDocument(id, {
           title: title.trim() || 'Untitled Document',
           content: contentJson,
@@ -98,7 +104,7 @@ export default function EditorPage() {
         showToast('Failed to save changes.', 'error');
       }
     }, 1000);
-  }, [id, title, editor, isOwner]);
+  }, [id, title, editor, isOwner, selectedVersionId]);
 
   // Fetch document details from API
   useEffect(() => {
@@ -179,6 +185,64 @@ export default function EditorPage() {
   const handleAttachmentUpdated = (newAttachment) => {
     setDocumentData((prev) => (prev ? { ...prev, attachment: newAttachment } : prev));
     showToast(newAttachment ? 'File attached successfully.' : 'Attachment removed.', 'success');
+  };
+
+  // Version History Selection (Non-Destructive Preview)
+  const handleSelectVersion = async (versionId) => {
+    if (!editor) return;
+
+    if (versionId === null) {
+      // Exit Preview Mode -> Return to Head
+      setSelectedVersionId(null);
+      setPreviewVersionData(null);
+      const activeContent = headDocContentRef.current || documentData?.content;
+      editor.commands.setContent(normalizeDocContent(activeContent), { emitUpdate: false });
+      editor.setEditable(isOwner);
+      return;
+    }
+
+    try {
+      // Cache current head before loading snapshot
+      if (selectedVersionId === null) {
+        headDocContentRef.current = editor.getJSON();
+      }
+
+      const res = await api.getVersion(id, versionId);
+      const ver = res?.version;
+      setSelectedVersionId(versionId);
+      setPreviewVersionData(ver);
+
+      // Load snapshot AST into Tiptap canvas in read-only preview mode
+      editor.commands.setContent(normalizeDocContent(ver?.content), { emitUpdate: false });
+      editor.setEditable(false);
+    } catch (err) {
+      console.error('Failed to preview version:', err);
+      showToast(err.message || 'Could not load version snapshot', 'error');
+    }
+  };
+
+  // Version Restore Action
+  const handleRestoreVersion = async (versionId) => {
+    if (!isOwner) return;
+    try {
+      const res = await api.restoreVersion(id, versionId);
+      const restoredDoc = res?.document;
+      setDocumentData(restoredDoc);
+      headDocContentRef.current = restoredDoc?.content;
+
+      setSelectedVersionId(null);
+      setPreviewVersionData(null);
+
+      if (editor) {
+        editor.commands.setContent(normalizeDocContent(restoredDoc?.content), { emitUpdate: false });
+        editor.setEditable(true);
+      }
+
+      showToast('Document restored to version successfully.', 'success');
+    } catch (err) {
+      console.error('Failed to restore version:', err);
+      showToast(err.message || 'Failed to restore version', 'error');
+    }
   };
 
   if (loading) {
@@ -293,7 +357,7 @@ export default function EditorPage() {
             )}
 
             {/* Live Save Status Badge */}
-            {isOwner && (
+            {isOwner && selectedVersionId === null && (
               <span
                 style={{
                   display: 'inline-flex',
@@ -344,12 +408,26 @@ export default function EditorPage() {
         </div>
 
         {/* Right: Actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Version History Toggle */}
+          <button
+            onClick={() => setIsHistoryOpen(!isHistoryOpen)}
+            className={`btn ${isHistoryOpen ? 'btn-primary' : 'btn-secondary'}`}
+            id="toggle-version-history-btn"
+            style={{ padding: '6px 12px', fontSize: '0.85rem' }}
+            title="View document version history"
+          >
+            <span>🕒</span>
+            <span>History</span>
+          </button>
+
+          {/* Share Modal Trigger (Owner only) */}
           {isOwner && (
             <button
               onClick={() => setIsShareModalOpen(true)}
               className="btn-primary"
               id="open-share-modal-btn"
+              style={{ padding: '6px 14px', fontSize: '0.85rem' }}
             >
               <span>👥</span>
               <span>Share</span>
@@ -358,8 +436,39 @@ export default function EditorPage() {
         </div>
       </header>
 
+      {/* Non-Destructive Preview Mode Banner */}
+      {selectedVersionId !== null && (
+        <div className="preview-mode-banner">
+          <div className="preview-mode-banner-info">
+            <span>⚠️</span>
+            <span>
+              <strong>Preview Mode:</strong> Viewing snapshot from{' '}
+              {new Date(previewVersionData?.createdAt).toLocaleString()}
+              {previewVersionData?.label ? ` ("${previewVersionData.label}")` : ''}
+              {previewVersionData?.authorName ? ` • Saved by ${previewVersionData.authorName}` : ''}
+            </span>
+          </div>
+          <div className="preview-mode-banner-actions">
+            <button
+              className="btn btn-ghost btn-sm"
+              onClick={() => handleSelectVersion(null)}
+            >
+              Exit preview
+            </button>
+            {isOwner && (
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={() => handleRestoreVersion(selectedVersionId)}
+              >
+                Restore this version
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Guest Access Banner */}
-      {!isOwner && (
+      {!isOwner && selectedVersionId === null && (
         <div
           style={{
             background: 'var(--color-info-subtle)',
@@ -394,7 +503,7 @@ export default function EditorPage() {
         }}
       >
         <div style={{ pointerEvents: 'auto' }}>
-          <Toolbar editor={editor} disabled={!isOwner} />
+          <Toolbar editor={editor} disabled={!isOwner || selectedVersionId !== null} />
         </div>
       </div>
 
@@ -426,12 +535,29 @@ export default function EditorPage() {
           <AttachmentDrawer
             documentId={id}
             attachment={documentData?.attachment}
-            isOwner={isOwner}
+            isOwner={isOwner && selectedVersionId === null}
             onAttachmentUpdated={handleAttachmentUpdated}
             onError={(msg) => showToast(msg, 'error')}
           />
         </div>
       </main>
+
+      {/* Version History Slide-Over Drawer */}
+      <VersionHistoryPanel
+        documentId={id}
+        isOwner={isOwner}
+        isOpen={isHistoryOpen}
+        onClose={() => {
+          setIsHistoryOpen(false);
+          if (selectedVersionId !== null) {
+            handleSelectVersion(null); // Exit preview when closing drawer
+          }
+        }}
+        selectedVersionId={selectedVersionId}
+        onSelectVersion={handleSelectVersion}
+        onRestoreVersion={handleRestoreVersion}
+        onSaveCurrentVersion={() => showToast('Version snapshot saved.', 'success')}
+      />
 
       {/* Share Modal Dialog */}
       {isShareModalOpen && (
@@ -448,3 +574,4 @@ export default function EditorPage() {
     </div>
   );
 }
+

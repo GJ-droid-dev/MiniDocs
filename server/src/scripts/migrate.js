@@ -41,10 +41,21 @@ const migrationSql = `
     CONSTRAINT uq_document_share UNIQUE (document_id, shared_with)
   );
 
+  -- 5. Versions Table (Historical snapshots of Tiptap AST trees)
+  CREATE TABLE IF NOT EXISTS versions (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+    created_by  TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    label       TEXT,
+    content     JSONB NOT NULL,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  );
+
   -- Indexes for query performance
   CREATE INDEX IF NOT EXISTS idx_documents_owner ON documents(owner_id);
   CREATE INDEX IF NOT EXISTS idx_shares_shared_with ON shares(shared_with);
   CREATE INDEX IF NOT EXISTS idx_attachments_document ON attachments(document_id);
+  CREATE INDEX IF NOT EXISTS idx_versions_document_created_at ON versions(document_id, created_at DESC);
 `;
 
 async function runMigration() {
@@ -55,7 +66,7 @@ async function runMigration() {
     await client.query(migrationSql);
     await client.query('COMMIT');
     console.log('✅ Database migration completed successfully.');
-    console.log('   - Tables: users, documents, attachments, shares');
+    console.log('   - Tables: users, documents, attachments, shares, versions');
     console.log('   - Indexes & Constraints created');
   } catch (err) {
     await client.query('ROLLBACK');
