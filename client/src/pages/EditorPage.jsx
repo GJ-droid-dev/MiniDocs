@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import Underline from '@tiptap/extension-underline';
 import { api } from '../api';
 import Toolbar from '../components/Toolbar';
 import AttachmentDrawer from '../components/AttachmentDrawer';
@@ -36,6 +37,7 @@ const EXTENSIONS = [
       levels: [1, 2],
     },
   }),
+  Underline,
 ];
 
 export default function EditorPage() {
