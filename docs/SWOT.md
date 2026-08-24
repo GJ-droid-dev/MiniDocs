@@ -1,6 +1,6 @@
 # SWOT Analysis — MiniDocs Architecture vs. Full-Scale Google Docs Design
 
-> This analysis compares our updated [architecture.md](file:///c:/Users/jangr/Documents/AJAIA/Docs/architecture.md) (a modern, decoupled core-slice architecture using **React on Vercel**, **Express on Railway**, and **Neon Serverless Postgres**) against the comprehensive Google Docs frontend system design described in [Article.txt](file:///c:/Users/jangr/Documents/AJAIA/Docs/Article.txt). The goal is to surface where our intentional constraints are strengths, where they leave gaps, where we can grow, and what risks to watch for.
+> This analysis compares our updated [architecture.md](architecture.md) (a modern, decoupled core-slice architecture using **React on Vercel**, **Express on Railway**, and **Neon Serverless Postgres**) against the comprehensive Google Docs frontend system design described in Article.txt. The goal is to surface where our intentional constraints are strengths, where they leave gaps, where we can grow, and what risks to watch for.
 
 ---
 
@@ -31,7 +31,7 @@ By separating the frontend (Vercel CDN) and backend (Railway) with cloud-native 
 - Containerized backend on Railway with persistent volume disk mount for file uploads.
 
 ### 2. Razor-Sharp Scope Discipline
-The architecture covers exactly the 7 core-slice requirements (FR1–FR6 + golden path) and nothing else. The [traceability matrix](file:///c:/Users/jangr/Documents/AJAIA/Docs/architecture.md) maps every FR to a concrete architectural decision. This is a strength the Article's design cannot claim — it covers everything but prioritises nothing.
+The architecture covers exactly the 7 core-slice requirements (FR1–FR6 + golden path) and nothing else. The [traceability matrix](architecture.md) maps every FR to a concrete architectural decision. This is a strength the Article's design cannot claim — it covers everything but prioritises nothing.
 
 ### 3. Native PostgreSQL `JSONB` for Document Trees
 Storing Tiptap/ProseMirror JSON in PostgreSQL's native `JSONB` column guarantees lossless round-tripping of all formatting. The Article discusses the challenge of preserving formatting fidelity (§11.1) — we solve it by choosing a structured editor that serialises directly to a queryable, indexable binary JSON format.

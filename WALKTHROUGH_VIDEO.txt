@@ -1,0 +1,23 @@
+MiniDocs — Product & Architecture Walkthrough Video
+=====================================================
+
+Walkthrough Video URL:
+https://www.loom.com/share/your-walkthrough-video-id
+
+Video Overview (3-5 Minutes):
+1. Introduction & Golden Path User Flow:
+   - Sign in as Alice (Owner)
+   - Create document & format rich-text (H1/H2, Bold, Italic, Underline, Bullet/Numbered Lists)
+   - Real-time autosave (● Saved ✓) and persistence across refreshes
+   - Upload file attachment (PDF/PNG/JPG ≤ 5MB) and binary download
+   - Save custom version milestone ("v1.0 - Architectural Draft")
+   - Make edits and save next version ("v2.0 - With Data Models")
+   - Preview past version in non-destructive mode and 1-click restore with auto-backup
+   - Share document with Bob (Recipient)
+   - Switch persona to Bob -> View document and version history in read-only mode
+
+2. Key Architecture & Engineering Decisions:
+   - PostgreSQL JSONB ProseMirror AST trees for zero formatting loss
+   - Express layered security boundaries (requireOwner vs requireReadAccess)
+   - Decoupled production deployment: Vercel (SPA) + Railway (API + Volume) + Neon (Serverless Postgres)
+   - AI-native engineering methodology: high velocity paired with strict human validation

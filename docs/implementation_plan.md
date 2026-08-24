@@ -3,9 +3,9 @@
 > **Goal.** Build the thinnest complete slice of MiniDocs: a working full-stack application where a user creates a rich-text document, attaches a file, shares it with another user, and everything persists across refresh and restart.
 >
 > **Source documents:**
-> - [Problem Statement](file:///c:/Users/jangr/Documents/AJAIA/Docs/problemstatement_core.md) — scope, requirements, acceptance criteria
-> - [Architecture](file:///c:/Users/jangr/Documents/AJAIA/Docs/architecture.md) — stack, schema, API, components, deployment
-> - [Conventions](file:///c:/Users/jangr/Documents/AJAIA/Docs/conventions.md) — naming, patterns, standards
+> - [Problem Statement](problemstatement_core.md) — scope, requirements, acceptance criteria
+> - [Architecture](architecture.md) — stack, schema, API, components, deployment
+> - [Conventions](conventions.md) — naming, patterns, standards
 
 ---
 
@@ -55,7 +55,7 @@ minidocs/
 
 #### Tasks:
 - [ ] Create root directory `minidocs/`.
-- [ ] Initialize git: `git init`, create `.gitignore` per [conventions §6.3](file:///c:/Users/jangr/Documents/AJAIA/Docs/conventions.md).
+- [ ] Initialize git: `git init`, create `.gitignore` per [conventions §6.3](conventions.md).
 - [ ] Add root `.prettierrc`: `{ "singleQuote": true, "trailingComma": "all", "semi": true }`.
 - [ ] Add root `package.json` with convenience scripts:
   ```json
@@ -162,7 +162,7 @@ minidocs/
 
 ### 2.1 Migration Script
 
-- [ ] Create `server/src/scripts/migrate.js` that runs the full DDL from [architecture §3](file:///c:/Users/jangr/Documents/AJAIA/Docs/architecture.md):
+- [ ] Create `server/src/scripts/migrate.js` that runs the full DDL from [architecture §3](architecture.md):
   - `users`, `documents`, `attachments`, `shares` tables.
   - Indexes: `idx_documents_owner`, `idx_shares_shared_with`, `idx_attachments_document`.
   - Unique constraint: `uq_document_share`.
@@ -213,7 +213,7 @@ minidocs/
 
 ### 3.3 Central Error Handler
 
-- [ ] Add error-handling middleware in `index.js` per [conventions §5.4](file:///c:/Users/jangr/Documents/AJAIA/Docs/conventions.md):
+- [ ] Add error-handling middleware in `index.js` per [conventions §5.4](conventions.md):
   ```javascript
   app.use((err, req, res, next) => {
     console.error(err);
@@ -254,7 +254,7 @@ minidocs/
 
 ### 4.3 Column Mapping
 
-- [ ] Implement `toDocument(row)` mapper per [conventions §5.3](file:///c:/Users/jangr/Documents/AJAIA/Docs/conventions.md):
+- [ ] Implement `toDocument(row)` mapper per [conventions §5.3](conventions.md):
   ```javascript
   function toDocument(row) {
     return {
@@ -371,7 +371,7 @@ minidocs/
 
 ### 6.3 API Client (`api/client.js`)
 
-- [ ] Implement the fetch wrapper per [conventions §4.3](file:///c:/Users/jangr/Documents/AJAIA/Docs/conventions.md).
+- [ ] Implement the fetch wrapper per [conventions §4.3](conventions.md).
 - [ ] Export `api.get()`, `api.post()`, `api.patch()`, `api.delete()`.
 - [ ] Handle non-JSON responses gracefully (for file downloads, use separate fetch).
 
@@ -541,7 +541,7 @@ Walk the **entire golden path** locally:
 
 ### 7.4 Production Acceptance Test
 
-Run the full acceptance script from [problemstatement_core.md §11](file:///c:/Users/jangr/Documents/AJAIA/Docs/problemstatement_core.md) on the **live deployed URL**:
+Run the full acceptance script from [problemstatement_core.md §11](problemstatement_core.md) on the **live deployed URL**:
 
 - [ ] **AC1:** Sign in as User A; create a document; rename it to "Architecture Review".
 - [ ] **AC2:** Write multi-paragraph content using **bold**, *italic*, underline, a heading, a bulleted list, and a numbered list.

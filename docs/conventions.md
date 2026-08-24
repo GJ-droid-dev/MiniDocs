@@ -1,6 +1,6 @@
 # Conventions & Standards — MiniDocs
 
-> **Purpose.** This document codifies every naming, coding, structural, and workflow convention for the MiniDocs project. Every contributor (human or AI) must follow these rules so the codebase stays consistent, reviewable, and aligned with the [architecture](file:///c:/Users/jangr/Documents/AJAIA/Docs/architecture.md) and [problem statement](file:///c:/Users/jangr/Documents/AJAIA/Docs/problemstatement_core.md).
+> **Purpose.** This document codifies every naming, coding, structural, and workflow convention for the MiniDocs project. Every contributor (human or AI) must follow these rules so the codebase stays consistent, reviewable, and aligned with the [architecture](architecture.md) and [problem statement](problemstatement_core.md).
 
 ---
 

@@ -1,6 +1,6 @@
 # Architecture Note — MiniDocs
 
-> **Scope anchor.** Every decision in this document serves the core-slice golden path defined in [`problemstatement_core.md`](file:///c:/Users/jangr/Documents/AJAIA/Docs/problemstatement_core.md). Nothing here is speculative; if a capability isn't needed for that path, it isn't designed.
+> **Scope anchor.** Every decision in this document serves the core-slice golden path defined in [`problemstatement_core.md`](problemstatement_core.md). Nothing here is speculative; if a capability isn't needed for that path, it isn't designed.
 
 ---
 

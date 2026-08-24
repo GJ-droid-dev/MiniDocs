@@ -13,14 +13,14 @@
 | Deliverable | Location | Status |
 |---|---|---|
 | **Source Code** | GitHub repository (`client/`, `server/`) | ✅ Complete |
-| **Local Setup Guide** | [`README.md`](file:///c:/Users/jangr/Documents/AJAIA/Docs/minidocs/README.md) (5-step quickstart) | ✅ Complete |
-| **Architecture Note** | [`ARCHITECTURE.md`](file:///c:/Users/jangr/Documents/AJAIA/Docs/minidocs/ARCHITECTURE.md) | ✅ Complete |
-| **AI-Native Workflow Note** | [`AI_WORKFLOW.md`](file:///c:/Users/jangr/Documents/AJAIA/Docs/minidocs/AI_WORKFLOW.md) | ✅ Complete |
-| **Design System Tokens** | [`docs/design_system.md`](file:///c:/Users/jangr/Documents/AJAIA/Docs/minidocs/docs/design_system.md) | ✅ Complete |
-| **Conventions & Standards** | [`docs/conventions.md`](file:///c:/Users/jangr/Documents/AJAIA/Docs/minidocs/docs/conventions.md) | ✅ Complete |
-| **SWOT Analysis** | [`docs/SWOT.md`](file:///c:/Users/jangr/Documents/AJAIA/Docs/minidocs/docs/SWOT.md) | ✅ Complete |
+| **Local Setup Guide** | [`README.md`](README.md) (5-step quickstart) | ✅ Complete |
+| **Architecture Note** | [`ARCHITECTURE.md`](ARCHITECTURE.md) | ✅ Complete |
+| **AI-Native Workflow Note** | [`AI_WORKFLOW.md`](AI_WORKFLOW.md) | ✅ Complete |
+| **Design System Tokens** | [`docs/design_system.md`](docs/design_system.md) | ✅ Complete |
+| **Conventions & Standards** | [`docs/conventions.md`](docs/conventions.md) | ✅ Complete |
+| **SWOT Analysis** | [`docs/SWOT.md`](docs/SWOT.md) | ✅ Complete |
 | **Automated Test Suites** | `server/src/scripts/test-phase*.js` | ✅ 44 / 44 Tests Passed (100%) |
-| **Walkthrough Video** | `WALKTHROUGH_VIDEO.txt` | 🎥 Recorded (Loom/YouTube link) |
+| **Walkthrough Video** | [`WALKTHROUGH_VIDEO.txt`](WALKTHROUGH_VIDEO.txt) | ✅ Included |
 
 ---
 
