@@ -4,6 +4,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import { api } from '../api';
+import { useAuth } from '../context/AuthContext';
 import Toolbar from '../components/Toolbar';
 import AttachmentDrawer from '../components/AttachmentDrawer';
 import ShareModal from '../components/ShareModal';
@@ -43,6 +44,7 @@ const EXTENSIONS = [
 export default function EditorPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [documentData, setDocumentData] = useState(null);
   const [isOwner, setIsOwner] = useState(false);
@@ -104,6 +106,7 @@ export default function EditorPage() {
     let isCancelled = false;
 
     async function loadDoc() {
+      if (!user) return;
       setLoading(true);
       setError(null);
       try {
@@ -137,14 +140,14 @@ export default function EditorPage() {
       }
     }
 
-    if (id) {
+    if (id && user) {
       loadDoc();
     }
 
     return () => {
       isCancelled = true;
     };
-  }, [id, editor]);
+  }, [id, editor, user?.id]);
 
   // Sync editor content if editor was initialized after documentData was fetched
   useEffect(() => {

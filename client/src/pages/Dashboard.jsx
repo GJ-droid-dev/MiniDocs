@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { api } from '../api';
 import Navbar from '../components/Navbar';
 import DocCard from '../components/DocCard';
 import Toast from '../components/Toast';
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const [ownedDocs, setOwnedDocs] = useState([]);
   const [sharedDocs, setSharedDocs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,6 +21,7 @@ export default function Dashboard() {
   };
 
   const loadDocuments = async () => {
+    if (!user) return;
     setLoading(true);
     try {
       const data = await api.getDocuments();
@@ -33,7 +36,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadDocuments();
-  }, []);
+  }, [user?.id]);
 
   const handleNewDocument = async () => {
     try {
