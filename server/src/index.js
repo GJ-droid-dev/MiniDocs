@@ -53,6 +53,21 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Root Landing Page
+app.get('/', (req, res) => {
+  res.json({
+    name: 'MiniDocs REST API',
+    status: 'online',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      users: '/api/users',
+      documents: '/api/documents',
+    },
+    documentation: 'https://github.com/GJ-droid-dev/MiniDocs',
+  });
+});
+
 // Health check endpoint (FR6 & Phase 1 verification)
 app.get('/api/health', (req, res) => {
   res.json({

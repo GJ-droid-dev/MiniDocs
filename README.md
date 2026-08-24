@@ -6,7 +6,7 @@
 
 ## 🚀 Live Demo & Deployment
 - **Frontend SPA (Vercel)**: [https://mini-docs-gamma.vercel.app](https://mini-docs-gamma.vercel.app) *(or your deployed Vercel link)*
-- **Backend API (Railway)**: [https://minidocs-backend.railway.app](https://minidocs-backend.railway.app) *(or your Railway backend link)*
+- **Backend API (Railway)**: [https://minidocs-production.up.railway.app](https://minidocs-production.up.railway.app)
 - **Database**: Neon Serverless PostgreSQL (`JSONB` AST trees)
 - **Repository**: [https://github.com/GJ-droid-dev/MiniDocs](https://github.com/GJ-droid-dev/MiniDocs)
 

@@ -4,7 +4,7 @@
 > **Candidate:** Gaurav Jangra  
 > **Repository:** [https://github.com/GJ-droid-dev/MiniDocs](https://github.com/GJ-droid-dev/MiniDocs)  
 > **Live Demo (Frontend):** [https://mini-docs-gamma.vercel.app](https://mini-docs-gamma.vercel.app) *(or your deployed Vercel URL)*  
-> **Backend API:** [https://minidocs-backend.railway.app](https://minidocs-backend.railway.app) *(or Railway deployment URL)*  
+> **Backend API:** [https://minidocs-production.up.railway.app](https://minidocs-production.up.railway.app)  
 
 ---
 
