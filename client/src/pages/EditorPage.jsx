@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
 import { api } from '../api';
 import { useAuth } from '../context/AuthContext';
 import Toolbar from '../components/Toolbar';
@@ -32,13 +31,13 @@ function normalizeDocContent(raw) {
   };
 }
 
+// Note: Underline is already bundled in Tiptap v3 StarterKit — do not re-register it.
 const EXTENSIONS = [
   StarterKit.configure({
     heading: {
       levels: [1, 2],
     },
   }),
-  Underline,
 ];
 
 export default function EditorPage() {
@@ -120,7 +119,7 @@ export default function EditorPage() {
 
         if (editor && !editor.isDestroyed) {
           const safeContent = normalizeDocContent(doc?.content);
-          editor.commands.setContent(safeContent, false);
+          editor.commands.setContent(safeContent, { emitUpdate: false });
           editor.setEditable(Boolean(data?.isOwner));
         }
 
@@ -153,7 +152,7 @@ export default function EditorPage() {
   useEffect(() => {
     if (editor && !editor.isDestroyed && documentData && isInitialMount.current) {
       const safeContent = normalizeDocContent(documentData.content);
-      editor.commands.setContent(safeContent, false);
+      editor.commands.setContent(safeContent, { emitUpdate: false });
       editor.setEditable(isOwner);
     }
   }, [editor, documentData, isOwner]);
