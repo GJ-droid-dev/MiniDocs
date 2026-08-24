@@ -3,7 +3,7 @@
 > **Full Stack Product Engineer Assignment — Ajaia**  
 > **Candidate:** Gaurav Jangra  
 > **Repository:** [https://github.com/GJ-droid-dev/MiniDocs](https://github.com/GJ-droid-dev/MiniDocs)  
-> **Live Demo (Frontend):** [https://mini-docs-gamma.vercel.app](https://mini-docs-gamma.vercel.app) *(or your deployed Vercel URL)*  
+> **Live Demo (Frontend):** [https://mini-docs-chi.vercel.app](https://mini-docs-chi.vercel.app)  
 > **Backend API:** [https://minidocs-production.up.railway.app](https://minidocs-production.up.railway.app)  
 
 ---
