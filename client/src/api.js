@@ -3,7 +3,9 @@
  * Attaches X-User-Id header to requests and standardizes responses.
  */
 
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/+$/, '')}/api`
+  : '/api';
 
 function getAuthHeaders(isMultipart = false) {
   const userId = localStorage.getItem('minidocs_user_id') || '';
